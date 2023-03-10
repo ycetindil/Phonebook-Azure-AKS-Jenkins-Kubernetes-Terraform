@@ -9,7 +9,7 @@ pipeline {
         stage('Create Infrastructure for the App') {
             steps {
                 sh 'az login --identity'
-                dir('/var/lib/jenkins/workspace/Jenkins_project/aks-terraform') {
+                dir('/var/lib/jenkins/workspace/Phonebook/aks-terraform') {
                     echo 'Creating Infrastructure for the App on AZURE Cloud'
                     sh 'terraform init'
                     sh 'terraform apply --auto-approve'
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Connect to AKS') {
             steps {
-                dir('/var/lib/jenkins/workspace/Jenkins_project/aks-terraform') {
+                dir('/var/lib/jenkins/workspace/Phonebook/aks-terraform') {
                     echo 'Injecting Terraform Output into connection command'
                     script {
                         env.AKS_NAME = sh(script: 'terraform output -raw aks_name', returnStdout:true).trim()
@@ -32,7 +32,7 @@ pipeline {
 
         stage('Deploy K8s files') {
             steps {
-                dir('/var/lib/jenkins/workspace/Jenkins_project/k8s') {
+                dir('/var/lib/jenkins/workspace/Phonebook/k8s') {
                     sh 'kubectl apply -f .'
                 }
             }
@@ -43,7 +43,7 @@ pipeline {
                 timeout(time:5, unit:'DAYS'){
                     input message:'Do you want to terminate?'
                 }
-                dir('/var/lib/jenkins/workspace/Jenkins_project/aks-terraform') {
+                dir('/var/lib/jenkins/workspace/Phonebook/aks-terraform') {
                     sh """
                     terraform destroy --auto-approve
                     """
