@@ -54,27 +54,27 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-###########
-### NSG ###
-###########
-data "azurerm_resources" "nsg" {
-  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
-  type                = "Microsoft.Network/networkSecurityGroups"
-}
+# ###########
+# ### NSG ###
+# ###########
+# data "azurerm_resources" "nsg" {
+#   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
+#   type                = "Microsoft.Network/networkSecurityGroups"
+# }
 
-resource "azurerm_network_security_rule" "nsg" {
-  name                        = "AllowNodePorts"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "30000-32767"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_kubernetes_cluster.aks.node_resource_group
-  network_security_group_name = data.azurerm_resources.nsg.resources.0.name
-}
+# resource "azurerm_network_security_rule" "nsg" {
+#   name                        = "AllowNodePorts"
+#   priority                    = 100
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Tcp"
+#   source_port_range           = "*"
+#   destination_port_range      = "30000-32767"
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_kubernetes_cluster.aks.node_resource_group
+#   network_security_group_name = data.azurerm_resources.nsg.resources.0.name
+# }
 
 #####################
 ### LOAD BALANCER ###
