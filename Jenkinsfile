@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        PIPELINE_NAME  = "phonebook"
-        TF_FOLDER      = "infra-tf"
-        K8S_FOLDER     = "k8s"
+        PIPELINE_NAME = "phonebook"
+        TF_FOLDER     = "infra-tf"
+        K8S_FOLDER    = "k8s"
     }
 
     stages {
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 sh 'az login --identity'
                 dir("/var/lib/jenkins/workspace/${PIPELINE_NAME}/${TF_FOLDER}") {
-                    echo 'Creating Infrastructure for the App on AZURE Cloud'
+                    echo 'Creating Infrastructure for the App'
                     sh 'terraform init'
                     sh 'terraform apply --auto-approve'
                 }
@@ -22,7 +22,7 @@ pipeline {
         stage('Create rule on AKS NSG') {
             steps {
                 dir("/var/lib/jenkins/workspace/${PIPELINE_NAME}/${TF_FOLDER}") {
-                    echo 'Injecting Terraform output into NSG rule creation command'
+                    echo 'Injecting Terraform outputs into NSG rule creation command'
                     script {
                         env.AKS_NODE_RG_NAME = sh(script: 'terraform output -raw aks_node_rg_name', returnStdout:true).trim()
                         env.AKS_NSG_NAME = sh(script: "az network nsg list --resource-group ${AKS_NODE_RG_NAME} --query \"[?contains(name, 'aks')].[name]\" --output tsv", returnStdout:true).trim()
